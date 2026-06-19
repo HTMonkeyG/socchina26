@@ -1,3 +1,6 @@
 [submodule "libraries/stm32g474xx-template"]
 	path = libraries/stm32g474xx-template
 	url = https://gitcode.com/HT-NUEDC-Topics/stm32g474xx-template
+[submodule "libraries/dc2"]
+	path = libraries/dc2
+	url = https://gitcode.com/HT-NUEDC-Topics/dc2
