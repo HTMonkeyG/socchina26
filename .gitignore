@@ -1,0 +1,7 @@
+dist/
+.vscode/
+RTE/
+DebugConfig/
+
+*.uvguix.*
+*.uvoptx
