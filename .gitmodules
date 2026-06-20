@@ -4,3 +4,6 @@
 [submodule "libraries/dc2"]
 	path = libraries/dc2
 	url = https://gitcode.com/HT-NUEDC-Topics/dc2
+[submodule "libraries/lwpkt"]
+	path = libraries/lwpkt
+	url = https://github.com/MaJerle/lwpkt
