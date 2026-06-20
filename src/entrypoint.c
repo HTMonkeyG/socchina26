@@ -19,9 +19,12 @@ int main() {
   SampleInitialize();
 
   while(1) {
+    if (FftUpdate())
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6);
     //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
     //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6);
     //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
   }
 
   return 0;
