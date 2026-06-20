@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G474xx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\src;..\..\src\control;..\..\src\utils;..\..\src\core;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Include;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc;..\..\libraries\dc2;..\cubemx\Core\Inc</IncludePath>
+              <IncludePath>..\..\src\backend;..\..\src\shared;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Include;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc;..\..\libraries\dc2;..\cubemx\Core\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -392,22 +392,22 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>src</GroupName>
+          <GroupName>src/backend</GroupName>
           <Files>
             <File>
               <FileName>entrypoint.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\entrypoint.c</FilePath>
+              <FilePath>..\..\src\backend\entrypoint.c</FilePath>
             </File>
             <File>
               <FileName>libstm32g4xx.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\src\libstm32g4xx.lib</FilePath>
+              <FilePath>..\..\src\backend\libstm32g4xx.lib</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>cubemx</GroupName>
+          <GroupName>projects/cubemx</GroupName>
           <Files>
             <File>
               <FileName>main.c</FileName>
@@ -462,22 +462,22 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>src/sample</GroupName>
+          <GroupName>src/backend/sample</GroupName>
           <Files>
             <File>
               <FileName>sample.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\sample\sample.c</FilePath>
+              <FilePath>..\..\src\backend\sample\sample.c</FilePath>
             </File>
             <File>
               <FileName>sample.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\src\sample\sample.h</FilePath>
+              <FilePath>..\..\src\backend\sample\sample.h</FilePath>
             </File>
             <File>
               <FileName>fft.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\sample\fft.c</FilePath>
+              <FilePath>..\..\src\backend\sample\fft.c</FilePath>
             </File>
           </Files>
         </Group>
