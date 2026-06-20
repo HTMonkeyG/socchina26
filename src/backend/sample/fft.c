@@ -1,8 +1,8 @@
 #include <stdalign.h>
 #include <dc2.h>
 #include <arm_math.h>
-#include "internal.h"
-#include "sample/sample.h"
+#include "backend/internal.h"
+#include "backend/sample/sample.h"
 
 // FFT double buffer.
 static f32 gFftInput[2][kFftSize * 2] = {0};

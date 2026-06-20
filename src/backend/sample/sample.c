@@ -1,6 +1,7 @@
 #include <dc2.h>
-#include "cubemx.h"
-#include "sample/sample.h"
+#include "backend/cubemx.h"
+#include "backend/internal.h"
+#include "backend/sample/sample.h"
 
 // Raw adc data.
 typedef struct {

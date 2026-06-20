@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G474xx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\src\backend;..\..\src\shared;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Include;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc;..\..\libraries\dc2;..\cubemx\Core\Inc</IncludePath>
+              <IncludePath>..\..\src;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Include;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc;..\..\libraries\dc2;..\cubemx\Core\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -478,6 +478,21 @@
               <FileName>fft.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\backend\sample\fft.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>src/shared</GroupName>
+          <Files>
+            <File>
+              <FileName>binaryStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\shared\binaryStream.c</FilePath>
+            </File>
+            <File>
+              <FileName>binaryStream.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\shared\binaryStream.h</FilePath>
             </File>
           </Files>
         </Group>
