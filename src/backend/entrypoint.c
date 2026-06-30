@@ -1,6 +1,7 @@
 #include <dc2.h>
 #include "backend/cubemx.h"
 #include "backend/sample/sample.h"
+#include "backend/sample/fft.h"
 
 static void MX_SystemInit() {
   HAL_Init();
@@ -16,14 +17,11 @@ static void MX_SystemInit() {
 int main() {
   MX_SystemInit();
 
-  SampleInitialize();
+  Sample_Initialize();
 
   while(1) {
-    if (FftUpdate())
+    if (Fft_TryGetResult())
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6);
-    //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
-    //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6);
-    //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
   }
 

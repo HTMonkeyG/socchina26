@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G474xx,LWPKT_IGNORE_USER_OPTS</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\src;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Include;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc;..\..\libraries\dc2;..\..\libraries\lwpkt\lwpkt\src\include;..\..\libraries\lwpkt\libs\lwrb\src\include;..\cubemx\Core\Inc</IncludePath>
+              <IncludePath>..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\..\libraries\stm32g474xx-template\Drivers\CMSIS\Include;..\..\libraries\stm32g474xx-template\Drivers\STM32G4xx_HAL_Driver\Inc;..\..\libraries\dc2;..\..\libraries\lwpkt\lwpkt\src\include;..\..\libraries\lwpkt\libs\lwrb\src\include;..\cubemx\Core\Inc;..\..\src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -465,14 +465,14 @@
           <GroupName>src/backend</GroupName>
           <Files>
             <File>
-              <FileName>entrypoint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\backend\entrypoint.c</FilePath>
-            </File>
-            <File>
               <FileName>libstm32g4xx.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\..\src\backend\libstm32g4xx.lib</FilePath>
+            </File>
+            <File>
+              <FileName>entrypoint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>E:\NUEDC\socchina26\code\src\backend\entrypoint.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -480,19 +480,14 @@
           <GroupName>src/backend/sample</GroupName>
           <Files>
             <File>
-              <FileName>sample.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\backend\sample\sample.c</FilePath>
-            </File>
-            <File>
-              <FileName>sample.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\src\backend\sample\sample.h</FilePath>
-            </File>
-            <File>
               <FileName>fft.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\backend\sample\fft.c</FilePath>
+              <FilePath>E:\NUEDC\socchina26\code\src\backend\sample\fft.c</FilePath>
+            </File>
+            <File>
+              <FileName>sample.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>E:\NUEDC\socchina26\code\src\backend\sample\sample.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -503,11 +498,6 @@
               <FileName>binaryStream.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\shared\binaryStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>binaryStream.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\src\shared\binaryStream.h</FilePath>
             </File>
           </Files>
         </Group>

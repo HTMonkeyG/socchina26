@@ -2,6 +2,7 @@
 #include <dc2.h>
 #include <arm_math.h>
 #include "backend/internal.h"
+#include "backend/sample/fft.h"
 #include "backend/sample/sample.h"
 
 // FFT double buffer.
@@ -20,12 +21,12 @@ static f32 *gFftBuffer = NULL;
 // FFT instance.
 static arm_cfft_instance_f32 gFft;
 
-void FftInitialize() {
+void Fft_Initialize() {
   arm_cfft_init_f32(&gFft, kFftSize);
   gFftBuffer = NULL;
 }
 
-void FftAddSample(
+void Fft_Update(
   f32 value
 ) {
   u16 idx = gFftSampleIdx << 1;
@@ -43,14 +44,23 @@ void FftAddSample(
   }
 }
 
-i32 FftUpdate() {
+void Fft_Terminate() {
+  memset(gFftInput, 0, sizeof(gFftInput));
+  memset(gFftOutput, 0, sizeof(gFftOutput));
+  gFftSampleIdx = 0;
+  gFftBufferIdx = 0;
+  gFftFillFlag = 0;
+  gFftBuffer = NULL;
+}
+
+FftResult Fft_TryGetResult() {
   if (!gFftFillFlag || !gFftBuffer)
-    return 0;
+    return NULL;
 
   arm_cfft_f32(&gFft, gFftBuffer, 0, 1);
   arm_cmplx_mag_f32(gFftBuffer, gFftOutput, kFftSize);
   gFftBuffer = NULL;
   gFftFillFlag = 0;
 
-  return 1;
+  return &gFftOutput;
 }

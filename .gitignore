@@ -2,6 +2,9 @@ dist/
 .vscode/
 RTE/
 DebugConfig/
+build/
+bak/
 
 *.uvguix.*
 *.uvoptx
+build.js

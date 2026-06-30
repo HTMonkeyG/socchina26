@@ -2,6 +2,7 @@
 #include "backend/cubemx.h"
 #include "backend/internal.h"
 #include "backend/sample/sample.h"
+#include "backend/sample/fft.h"
 
 // Raw adc data.
 typedef struct {
@@ -13,12 +14,11 @@ typedef struct {
   u16 iN;
 } SampleRaw;
 
-SampleResult gSampleResult;
-
 static SampleRaw gRawSampleData;
+static SampleResult gSampleResult;
 
-void SampleInitialize() {
-  FftInitialize();
+void Sample_Initialize() {
+  Fft_Initialize();
 
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADC_Start_DMA(&hadc2, (uint32_t *)&gRawSampleData, 3);
@@ -26,8 +26,13 @@ void SampleInitialize() {
   HAL_HRTIM_WaveformCounterStart(&hhrtim1, HRTIM_TIMERID_MASTER);
 }
 
-void SampleTerminate() {
+void Sample_Terminate() {
+  Fft_Terminate();
   HAL_HRTIM_WaveformCounterStop(&hhrtim1, HRTIM_TIMERID_MASTER);
+}
+
+SampleResult *Sample_GetResult() {
+  return &gSampleResult;
 }
 
 void HAL_HRTIM_RepetitionEventCallback(
@@ -48,5 +53,5 @@ void HAL_ADC_ConvCpltCallback(
   gSampleResult.iL = Dc2GetRealCurrent(gRawSampleData.iL, 100, 0);
   gSampleResult.iN = Dc2GetRealCurrent(gRawSampleData.iN, 100, 0);
 
-  FftAddSample(gSampleResult.uLN);
+  Fft_Update(gSampleResult.uLN);
 }
