@@ -4,6 +4,7 @@
 #include <esp_lcd_ili9341.h>
 #include <esp_log.h>
 #include "frontend/ui/tft.h"
+#include "frontend/ui/menu/menu.h"
 
 #define PIN_NUM_MOSI 13
 #define PIN_NUM_CLK  12
@@ -12,10 +13,18 @@
 #define PIN_NUM_RST  20
 #define PIN_NUM_BCKL 8
 
-#define DISP_WIDTH  320
-#define DISP_HEIGHT 240
+#define SPI_CLOCK_SPEED (20 * 1000 * 1000) // 40MHz
 
-#define SPI_CLOCK_SPEED (40 * 1000 * 1000) // 40MHz
+typedef struct {
+  lv_obj_t *btn;
+  lv_style_t style;
+} TftButton;
+
+typedef struct {
+  TftButton btn1;
+} Tft;
+
+static Tft gTft = {0};
 
 void Tft_Initialize() {
   const lvgl_port_cfg_t lvgl_cfg = ESP_LVGL_PORT_INIT_CONFIG();
@@ -31,7 +40,7 @@ void Tft_Initialize() {
     .sclk_io_num = PIN_NUM_CLK,
     .quadwp_io_num = -1,
     .quadhd_io_num = -1,
-    .max_transfer_sz = DISP_WIDTH * DISP_HEIGHT * sizeof(uint16_t),
+    .max_transfer_sz = kTftWidth * kTftHeight * sizeof(uint16_t),
   };
   ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &bus_cfg, SPI_DMA_CH_AUTO));
 
@@ -63,10 +72,10 @@ void Tft_Initialize() {
   const lvgl_port_display_cfg_t disp_cfg = {
     .io_handle = io_handle,
     .panel_handle = panel_handle,
-    .buffer_size = DISP_WIDTH * DISP_HEIGHT,
+    .buffer_size = kTftWidth * kTftHeight,
     .double_buffer = false,
-    .hres = DISP_WIDTH,
-    .vres = DISP_HEIGHT,
+    .hres = kTftWidth,
+    .vres = kTftHeight,
     .monochrome = false,
     .color_format = LV_COLOR_FORMAT_RGB565,
     .rotation = {
@@ -76,6 +85,7 @@ void Tft_Initialize() {
     },
     .flags = {
       .buff_dma = true,
+      .swap_bytes = false
     }
   };
   lv_disp_t * disp = lvgl_port_add_disp(&disp_cfg);
@@ -93,4 +103,64 @@ void Tft_Initialize() {
   };
   gpio_config(&bk_gpio_config);
   gpio_set_level(PIN_NUM_BCKL, 1);
+
+  printf("LVGL and ST7735 initialization done.\n");
+}
+
+void Tft_CreatePanel() {
+  lvgl_port_lock(0);
+  /*lv_obj_t *label = lv_label_create(lv_screen_active());
+  lv_label_set_text(label, "Hello ST7735!");
+  lv_obj_set_style_text_color(label, lv_color_hex(0xFF0000), LV_STATE_DEFAULT);
+  lv_obj_center(label);*/
+
+  /*lv_obj_t *menu = lv_menu_create(lv_scr_act());
+  lv_obj_set_size(menu, lv_pct(80), lv_pct(80));
+  lv_obj_center(menu);
+
+  lv_menu_set_mode_header(menu, LV_MENU_HEADER_TOP_FIXED);
+  lv_menu_set_mode_root_back_button(menu, LV_MENU_ROOT_BACK_BUTTON_ENABLED);
+
+  lv_obj_t *main_page = lv_menu_page_create(menu, "Main");
+  lv_obj_t *main_list = lv_list_create(main_page);
+  lv_obj_set_size(main_list, lv_pct(100), lv_pct(100));
+
+  lv_obj_t *sub_page = lv_menu_page_create(menu, "Sub");
+  lv_obj_t *sub_list = lv_list_create(sub_page);
+  lv_obj_set_size(sub_list, lv_pct(100), lv_pct(100));
+
+  lv_obj_t *btn = lv_list_add_button(main_list, LV_SYMBOL_FILE, "Enter");
+
+  lv_menu_set_page(menu, main_page);*/
+
+  /*lv_style_t *pStyle = &gTft.btn1.style;
+  lv_style_init(pStyle);
+
+  lv_style_set_bg_color(pStyle, lv_palette_main(LV_PALETTE_BLUE));
+  lv_style_set_bg_opa(pStyle, LV_OPA_COVER);
+  lv_style_set_bg_grad_color(pStyle, lv_palette_lighten(LV_PALETTE_BLUE, 2));
+  lv_style_set_bg_grad_dir(pStyle, LV_GRAD_DIR_VER);
+
+  lv_obj_t *pBtn = gTft.btn1.btn = lv_btn_create(lv_scr_act());
+  lv_obj_add_style(pBtn, pStyle, LV_STATE_DEFAULT);
+  lv_obj_set_size(pBtn, lv_pct(20), lv_pct(20));
+  lv_obj_set_pos(pBtn, lv_pct(20), lv_pct(20));*/
+  lv_obj_set_style_bg_color(lv_screen_active(), Tft_Color(0x15, 0x25, 0x2f), LV_STATE_DEFAULT);
+  UiChartMenu_Initialize();
+
+  lvgl_port_unlock();
+}
+
+void Tft_Update() {
+  /*static i32 count = 0;
+
+  lv_obj_set_pos(gTft.btn1.btn, lv_pct(count), lv_pct(20));
+  count++;
+  count %= 50;*/
+
+  static i32 count = 0;
+
+  UiChartMenu_Update(&count, 1);
+  count++;
+  count %= 50;
 }

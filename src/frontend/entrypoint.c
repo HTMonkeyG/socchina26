@@ -14,17 +14,10 @@ static const char *TAG = "example";
 
 void app_main() {
   Tft_Initialize();
-
-  lvgl_port_lock(0);
-  lv_obj_t *label = lv_label_create(lv_screen_active());
-  lv_label_set_text(label, "Hello ST7735!");
-  lv_obj_center(label);
-  lvgl_port_unlock();
-
-  printf("LVGL and ST7735 initialization done.\n");
+  Tft_CreatePanel();
 
   while (1) {
-    //ESP_LOGI(TAG, "aaa");
-    vTaskDelay(1);
+    Tft_Update();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
