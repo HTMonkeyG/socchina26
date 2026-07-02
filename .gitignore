@@ -3,8 +3,10 @@ dist/
 RTE/
 DebugConfig/
 build/
+managed_components/
 bak/
 
 *.uvguix.*
 *.uvoptx
 build.js
+dependencies.lock

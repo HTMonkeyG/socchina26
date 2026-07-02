@@ -472,7 +472,7 @@
             <File>
               <FileName>entrypoint.c</FileName>
               <FileType>1</FileType>
-              <FilePath>E:\NUEDC\socchina26\code\src\backend\entrypoint.c</FilePath>
+              <FilePath>..\..\src\backend\entrypoint.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -482,12 +482,12 @@
             <File>
               <FileName>fft.c</FileName>
               <FileType>1</FileType>
-              <FilePath>E:\NUEDC\socchina26\code\src\backend\sample\fft.c</FilePath>
+              <FilePath>..\..\src\backend\sample\fft.c</FilePath>
             </File>
             <File>
               <FileName>sample.c</FileName>
               <FileType>1</FileType>
-              <FilePath>E:\NUEDC\socchina26\code\src\backend\sample\sample.c</FilePath>
+              <FilePath>..\..\src\backend\sample\sample.c</FilePath>
             </File>
           </Files>
         </Group>
