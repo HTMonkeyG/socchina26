@@ -13,7 +13,7 @@
 #define PIN_NUM_RST  20
 #define PIN_NUM_BCKL 8
 
-#define SPI_CLOCK_SPEED (20 * 1000 * 1000) // 40MHz
+#define kTftSpiSpeed (40 * 1000 * 1000) // 40MHz
 
 typedef struct {
   lv_obj_t *btn;
@@ -48,7 +48,7 @@ void Tft_Initialize() {
   esp_lcd_panel_io_spi_config_t io_config = {
     .dc_gpio_num = PIN_NUM_DC,
     .cs_gpio_num = PIN_NUM_CS,
-    .pclk_hz = SPI_CLOCK_SPEED,
+    .pclk_hz = kTftSpiSpeed,
     .lcd_cmd_bits = 8,
     .lcd_param_bits = 8,
     .spi_mode = 0,
@@ -58,7 +58,7 @@ void Tft_Initialize() {
 
   esp_lcd_panel_handle_t panel_handle = NULL;
   esp_lcd_panel_dev_config_t panel_config = {
-    .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
+    .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
     .reset_gpio_num = PIN_NUM_RST,
     .bits_per_pixel = 16,
     .vendor_config = NULL,
@@ -85,7 +85,7 @@ void Tft_Initialize() {
     },
     .flags = {
       .buff_dma = true,
-      .swap_bytes = false
+      .swap_bytes = true
     }
   };
   lv_disp_t * disp = lvgl_port_add_disp(&disp_cfg);
