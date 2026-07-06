@@ -21,6 +21,8 @@ typedef struct {
 } TftButton;
 
 typedef struct {
+  UiChartMenu chart1;
+  UiOcpMenu ocp;
   TftButton btn1;
 } Tft;
 
@@ -145,8 +147,10 @@ void Tft_CreatePanel() {
   lv_obj_add_style(pBtn, pStyle, LV_STATE_DEFAULT);
   lv_obj_set_size(pBtn, lv_pct(20), lv_pct(20));
   lv_obj_set_pos(pBtn, lv_pct(20), lv_pct(20));*/
-  lv_obj_set_style_bg_color(lv_screen_active(), Tft_Color(0x15, 0x25, 0x2f), LV_STATE_DEFAULT);
-  UiChartMenu_Initialize();
+  lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x15252f), LV_STATE_DEFAULT);
+  UiChartMenu_Initialize(&gTft.chart1);
+  UiOcpMenu_Initialize(&gTft.ocp);
+  UiOcpMenu_Show(&gTft.ocp);
 
   lvgl_port_unlock();
 }
@@ -158,9 +162,8 @@ void Tft_Update() {
   count++;
   count %= 50;*/
 
-  static i32 count = 0;
-
-  UiChartMenu_Update(&count, 1);
-  count++;
-  count %= 50;
+  lv_coord_t arr[10];
+  for (int i = 0; i < 10; i++)
+    arr[i] = rand() % 100;
+  UiChartMenu_Update(&gTft.chart1, arr, 10);
 }
