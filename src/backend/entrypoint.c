@@ -2,6 +2,7 @@
 #include "backend/cubemx.h"
 #include "backend/sample/sample.h"
 #include "backend/sample/fft.h"
+#include "backend/connection/connection.h"
 
 static void MX_SystemInit() {
   HAL_Init();
@@ -14,14 +15,15 @@ static void MX_SystemInit() {
   MX_USART3_UART_Init();
 }
 
+
 int main() {
   MX_SystemInit();
 
+  Connection_Initialize();
   Sample_Initialize();
 
   while(1) {
-    if (Fft_TryGetResult())
-      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6);
+    Connection_Update();
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
   }
 

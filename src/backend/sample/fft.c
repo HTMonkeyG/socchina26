@@ -38,9 +38,14 @@ void Fft_Update(
   gFftSampleIdx++;
   if (gFftSampleIdx >= kFftSize) {
     gFftSampleIdx = 0;
+
+    // ENTER_CRITICAL
+    __disable_irq();
     gFftFillFlag = 1;
     gFftBuffer = (f32 *)gFftInput[gFftBufferIdx];
     gFftBufferIdx = gFftBufferIdx == 0 ? 1 : 0;
+    // LEAVE_CRITICAL
+    __enable_irq();
   }
 }
 
@@ -54,13 +59,30 @@ void Fft_Terminate() {
 }
 
 FftResult Fft_TryGetResult() {
-  if (!gFftFillFlag || !gFftBuffer)
+  f32 *buffer = NULL;
+
+  // ENTER_CRITICAL
+  __disable_irq();
+  if (gFftFillFlag && gFftBuffer) {
+    buffer = gFftBuffer;
+    gFftFillFlag = 0;
+    gFftBuffer = NULL;
+  }
+  // LEAVE_CRITICAL
+  __enable_irq();
+
+  if (!buffer)
     return NULL;
 
+  // Calculate FFT.
   arm_cfft_f32(&gFft, gFftBuffer, 0, 1);
   arm_cmplx_mag_f32(gFftBuffer, gFftOutput, kFftSize);
-  gFftBuffer = NULL;
-  gFftFillFlag = 0;
+
+  // Normalize.
+  const f32 kNormVal = (f32)kFftSize / 2.0f;
+  gFftOutput[0] /= (f32)kFftSize;
+  for (int i = 1; i < kFftSize; i++)
+    gFftOutput[i] /= kNormVal;
 
   return &gFftOutput;
 }

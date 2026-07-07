@@ -15,6 +15,8 @@ typedef struct {
 
 void Sample_Initialize(void);
 void Sample_Terminate(void);
+
 SampleResult *Sample_GetResult(void);
+i08 Sample_TryUpdate(void);
 
 #endif

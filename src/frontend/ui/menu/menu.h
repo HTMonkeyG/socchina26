@@ -3,6 +3,7 @@
 
 #include <lvgl.h>
 #include <dc2.h>
+#include "shared/packets.h"
 
 #define MenuInitializeOnce(var, init) \
   do {\
@@ -12,29 +13,27 @@
   } while(0)
 
 // ----------------------------------------------------------------------------
-// [SECTION] UiChartMenu
+// [SECTION] UiFftChartMenu
 // ----------------------------------------------------------------------------
-
-#define UiChartMenu_kChartDataLen 10
 
 typedef struct {
   lv_obj_t *screen;
   lv_obj_t *chart;
   lv_chart_series_t *series;
-  lv_coord_t data[UiChartMenu_kChartDataLen];
-} UiChartMenu;
+  lv_coord_t data[kFftResultPoints];
+} UiFftChartMenu;
 
 // Chart menu.
-void UiChartMenu_Initialize(
-  UiChartMenu *self);
-void UiChartMenu_Show(
-  UiChartMenu *self);
-void UiChartMenu_Update(
-  UiChartMenu *self,
+void UiFftChartMenu_Initialize(
+  UiFftChartMenu *self);
+void UiFftChartMenu_Show(
+  UiFftChartMenu *self);
+void UiFftChartMenu_SetResult(
+  UiFftChartMenu *self,
   lv_coord_t *val,
   i32 count);
-void UiChartMenu_Terminate(
-  UiChartMenu *self);
+void UiFftChartMenu_Terminate(
+  UiFftChartMenu *self);
 
 // ----------------------------------------------------------------------------
 // [SECTION] UiOcpMenu

@@ -16,6 +16,7 @@ typedef struct {
 
 static SampleRaw gRawSampleData;
 static SampleResult gSampleResult;
+static i08 gSysTickFlag = 0;
 
 void Sample_Initialize() {
   Fft_Initialize();
@@ -35,6 +36,14 @@ SampleResult *Sample_GetResult() {
   return &gSampleResult;
 }
 
+i08 Sample_TryUpdate() {
+	if (gSysTickFlag) {
+		gSysTickFlag = 0;
+		return 1;
+	}
+  return 0;
+}
+
 void HAL_HRTIM_RepetitionEventCallback(
   HRTIM_HandleTypeDef *hhrtim,
   uint32_t TimerIdx
@@ -46,6 +55,8 @@ void HAL_HRTIM_RepetitionEventCallback(
 void HAL_ADC_ConvCpltCallback(
   ADC_HandleTypeDef *hAdc
 ) {
+  static i32 s_prescaler = 0;
+
   if (hAdc->Instance != ADC2)
     return;
 
@@ -54,4 +65,12 @@ void HAL_ADC_ConvCpltCallback(
   gSampleResult.iN = Dc2GetRealCurrent(gRawSampleData.iN, 100, 0);
 
   Fft_Update(gSampleResult.uLN);
+  // Rms_Update();
+  // Pll_Update();
+
+  s_prescaler++;
+  if (s_prescaler >= 512) {
+    s_prescaler = 0;
+    gSysTickFlag = 1;
+  }
 }

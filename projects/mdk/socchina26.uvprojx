@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -498,6 +498,31 @@
               <FileName>binaryStream.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\shared\binaryStream.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>src/backend/connection</GroupName>
+          <Files>
+            <File>
+              <FileName>uartPort.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\backend\connection\uartPort.c</FilePath>
+            </File>
+            <File>
+              <FileName>sendAllBk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\backend\connection\sendAllBk.c</FilePath>
+            </File>
+            <File>
+              <FileName>handleMsgBk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\backend\connection\handleMsgBk.c</FilePath>
+            </File>
+            <File>
+              <FileName>connection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\backend\connection\connection.c</FilePath>
             </File>
           </Files>
         </Group>

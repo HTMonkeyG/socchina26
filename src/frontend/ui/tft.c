@@ -3,15 +3,16 @@
 #include <esp_lcd_panel_dev.h>
 #include <esp_lcd_ili9341.h>
 #include <esp_log.h>
+#include "shared/packets.h"
 #include "frontend/ui/tft.h"
 #include "frontend/ui/menu/menu.h"
 
-#define PIN_NUM_MOSI 13
-#define PIN_NUM_CLK  12
-#define PIN_NUM_CS   10
-#define PIN_NUM_DC   19
-#define PIN_NUM_RST  20
-#define PIN_NUM_BCKL 8
+#define kTftPinMosi 13
+#define kTftPinClk  12
+#define kTftPinCs   10
+#define kTftPinDc   19
+#define kTftPinRst  20
+#define kTftPinBg 8
 
 #define kTftSpiSpeed (40 * 1000 * 1000) // 40MHz
 
@@ -21,7 +22,7 @@ typedef struct {
 } TftButton;
 
 typedef struct {
-  UiChartMenu chart1;
+  UiFftChartMenu chart1;
   UiOcpMenu ocp;
   TftButton btn1;
 } Tft;
@@ -37,9 +38,9 @@ void Tft_Initialize() {
   }
 
   spi_bus_config_t bus_cfg = {
-    .mosi_io_num = PIN_NUM_MOSI,
+    .mosi_io_num = kTftPinMosi,
     .miso_io_num = -1,
-    .sclk_io_num = PIN_NUM_CLK,
+    .sclk_io_num = kTftPinClk,
     .quadwp_io_num = -1,
     .quadhd_io_num = -1,
     .max_transfer_sz = kTftWidth * kTftHeight * sizeof(uint16_t),
@@ -48,8 +49,8 @@ void Tft_Initialize() {
 
   esp_lcd_panel_io_handle_t io_handle = NULL;
   esp_lcd_panel_io_spi_config_t io_config = {
-    .dc_gpio_num = PIN_NUM_DC,
-    .cs_gpio_num = PIN_NUM_CS,
+    .dc_gpio_num = kTftPinDc,
+    .cs_gpio_num = kTftPinCs,
     .pclk_hz = kTftSpiSpeed,
     .lcd_cmd_bits = 8,
     .lcd_param_bits = 8,
@@ -61,7 +62,7 @@ void Tft_Initialize() {
   esp_lcd_panel_handle_t panel_handle = NULL;
   esp_lcd_panel_dev_config_t panel_config = {
     .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
-    .reset_gpio_num = PIN_NUM_RST,
+    .reset_gpio_num = kTftPinRst,
     .bits_per_pixel = 16,
     .vendor_config = NULL,
   };
@@ -97,14 +98,14 @@ void Tft_Initialize() {
   }
 
   gpio_config_t bk_gpio_config = {
-    .pin_bit_mask = 1ULL << PIN_NUM_BCKL,
+    .pin_bit_mask = 1ULL << kTftPinBg,
     .mode = GPIO_MODE_OUTPUT,
     .pull_up_en = GPIO_PULLUP_DISABLE,
     .pull_down_en = GPIO_PULLDOWN_DISABLE,
     .intr_type = GPIO_INTR_DISABLE,
   };
   gpio_config(&bk_gpio_config);
-  gpio_set_level(PIN_NUM_BCKL, 1);
+  gpio_set_level(kTftPinBg, 1);
 
   printf("LVGL and ST7735 initialization done.\n");
 }
@@ -147,12 +148,21 @@ void Tft_CreatePanel() {
   lv_obj_add_style(pBtn, pStyle, LV_STATE_DEFAULT);
   lv_obj_set_size(pBtn, lv_pct(20), lv_pct(20));
   lv_obj_set_pos(pBtn, lv_pct(20), lv_pct(20));*/
-  lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x15252f), LV_STATE_DEFAULT);
-  UiChartMenu_Initialize(&gTft.chart1);
+  UiFftChartMenu_Initialize(&gTft.chart1);
   UiOcpMenu_Initialize(&gTft.ocp);
-  UiOcpMenu_Show(&gTft.ocp);
+  UiFftChartMenu_Show(&gTft.chart1);
+  //UiOcpMenu_Show(&gTft.ocp);
 
   lvgl_port_unlock();
+}
+
+void Tft_SetFftResult(
+  FftResultMsg *msg
+) {
+  lv_coord_t arr[kFftResultPoints];
+  for (int i = 0; i < kFftResultPoints; i++)
+    arr[i] = msg->points[i];
+  UiFftChartMenu_SetResult(&gTft.chart1, arr, kFftResultPoints);
 }
 
 void Tft_Update() {
@@ -160,10 +170,11 @@ void Tft_Update() {
 
   lv_obj_set_pos(gTft.btn1.btn, lv_pct(count), lv_pct(20));
   count++;
-  count %= 50;*/
+  count %= 50;
 
-  lv_coord_t arr[10];
+  lv_coord_t arr[10] = {0};
   for (int i = 0; i < 10; i++)
     arr[i] = rand() % 100;
-  UiChartMenu_Update(&gTft.chart1, arr, 10);
+  if (!gpio_get_level(38))
+    UiFftChartMenu_Update(&gTft.chart1, arr, 10);*/
 }
