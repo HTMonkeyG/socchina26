@@ -9,7 +9,7 @@ void HandleMsgFr(
   u08 cmd,
   BinaryStream *stream
 ) {
-  printf("Msg %d\n", cmd);
+  //printf("Msg %d\n", cmd);
   switch (cmd) {
     case kPacketId_FftResultMsg: {
       // Handle FFT result.

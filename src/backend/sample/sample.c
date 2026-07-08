@@ -3,6 +3,8 @@
 #include "backend/internal.h"
 #include "backend/sample/sample.h"
 #include "backend/sample/fft.h"
+#include "backend/sample/pll.h"
+#include "backend/sample/rms.h"
 
 // Raw adc data.
 typedef struct {
@@ -16,10 +18,14 @@ typedef struct {
 
 static SampleRaw gRawSampleData;
 static SampleResult gSampleResult;
+static Rms gRmsV, gRmsI;
 static i08 gSysTickFlag = 0;
 
 void Sample_Initialize() {
   Fft_Initialize();
+
+  Rms_Initialize(&gRmsI);
+  Rms_Initialize(&gRmsV);
 
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADC_Start_DMA(&hadc2, (uint32_t *)&gRawSampleData, 3);
@@ -32,7 +38,7 @@ void Sample_Terminate() {
   HAL_HRTIM_WaveformCounterStop(&hhrtim1, HRTIM_TIMERID_MASTER);
 }
 
-SampleResult *Sample_GetResult() {
+const SampleResult *Sample_GetResult() {
   return &gSampleResult;
 }
 
@@ -55,8 +61,6 @@ void HAL_HRTIM_RepetitionEventCallback(
 void HAL_ADC_ConvCpltCallback(
   ADC_HandleTypeDef *hAdc
 ) {
-  static i32 s_prescaler = 0;
-
   if (hAdc->Instance != ADC2)
     return;
 
@@ -65,12 +69,18 @@ void HAL_ADC_ConvCpltCallback(
   gSampleResult.iN = Dc2GetRealCurrent(gRawSampleData.iN, 100, 0);
 
   Fft_Update(gSampleResult.uLN);
-  // Rms_Update();
+  UpdatePrescaled(Rms, kRmsInteval) {
+    Rms_Update(&gRmsI, gSampleResult.iL);
+    Rms_Update(&gRmsV, gSampleResult.uLN);
+
+    // Store the value.
+    gSampleResult.rmsI = gRmsI.value;
+    gSampleResult.rmsU = gRmsV.value;
+  }
+  //Dc2SlideWindowAvgUpdate()
   // Pll_Update();
 
-  s_prescaler++;
-  if (s_prescaler >= 512) {
-    s_prescaler = 0;
+  UpdatePrescaled(SysTick, kSampleTickInteval) {
     gSysTickFlag = 1;
   }
 }

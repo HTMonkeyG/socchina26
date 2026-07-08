@@ -13,9 +13,8 @@ static void SerializeFft() {
   HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6);
   FftResultMsg msg = {0};
 
-  /*for (int i = 0; i < kFftResultPoints; i++)
-    msg.points[i] = (*result)[i << 1];*/
-  msg.points[1] = rand() % 100;
+  for (int i = 0; i < kFftResultPoints; i++)
+    msg.points[i] = (u16)((*result)[i << 1] / Sample_GetResult()->rmsU / DC2_SQRT2_F * 100.0f);
 
   Uart_SendMessage(kPacketId_FftResultMsg, (u08 *)&msg, sizeof(FftResultMsg));
 }

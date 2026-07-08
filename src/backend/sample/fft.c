@@ -75,8 +75,8 @@ FftResult Fft_TryGetResult() {
     return NULL;
 
   // Calculate FFT.
-  arm_cfft_f32(&gFft, gFftBuffer, 0, 1);
-  arm_cmplx_mag_f32(gFftBuffer, gFftOutput, kFftSize);
+  arm_cfft_f32(&gFft, buffer, 0, 1);
+  arm_cmplx_mag_f32(buffer, gFftOutput, kFftSize);
 
   // Normalize.
   const f32 kNormVal = (f32)kFftSize / 2.0f;
