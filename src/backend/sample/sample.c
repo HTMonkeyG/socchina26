@@ -6,6 +6,11 @@
 #include "backend/sample/pll.h"
 #include "backend/sample/rms.h"
 
+#define kPowerAvgPoints 128
+#define kPowerAvgFreq 4
+// 4Hz window time, 256 points a window.
+#define kPowerAvgInteval (kSampleRate / kPowerAvgFreq / kPowerAvgPoints)
+
 // ----------------------------------------------------------------------------
 // [SECTION] declarations
 // ----------------------------------------------------------------------------
@@ -24,7 +29,17 @@ static SampleRaw gRawSampleData;
 static SampleResult gSampleResult;
 static f32 gSampleCalibrate[3] = {0};
 static Rms gRmsV, gRmsI;
+static Pll gPllV = {
+  .Kp = 133.0f,
+  .Ki = 8883.0f,
+  .omega0 = 50.0f * DC2_PI_F * 2.0f,
+  .k = DC2_SQRT2_F,
+  .Ts = 1.0f / kSampleRate
+};
 static i08 gSysTickFlag = 0;
+static f32 gAvgScratchP[kPowerAvgPoints]
+  , gAvgScratchQ[kPowerAvgPoints];
+static Dc2SlideWindowCtx gAvgP, gAvgQ;
 
 // ----------------------------------------------------------------------------
 // [SECTION] functions
@@ -35,6 +50,11 @@ void Sample_Initialize() {
 
   Rms_Initialize(&gRmsI);
   Rms_Initialize(&gRmsV);
+
+  Pll_Initialize(&gPllV);
+
+  Dc2SlideWindowAvgInit(&gAvgP, gAvgScratchP, kPowerAvgPoints);
+  Dc2SlideWindowAvgInit(&gAvgQ, gAvgScratchQ, kPowerAvgPoints);
 
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADC_Start_DMA(&hadc2, (uint32_t *)&gRawSampleData, 3);
@@ -102,8 +122,20 @@ void HAL_ADC_ConvCpltCallback(
     gSampleResult.rmsI = gRmsI.value;
     gSampleResult.rmsU = gRmsV.value;
   }
-  //Dc2SlideWindowAvgUpdate()
-  // Pll_Update();
+
+  // Update PLL to get the active power and reactive power.
+  Pll_Update(&gPllV, gSampleResult.uLN);
+  f32 p = sinf(gPllV.phase - DC2_PI_F / 2) * gSampleResult.iL
+    , q = cosf(gPllV.phase - DC2_PI_F / 2) * gSampleResult.iL;
+
+  // Get the frequency in Hz.
+  gSampleResult.freq = gPllV.freq / DC2_PI_F / 2;
+
+  // Average of active power and reactive power values.
+  UpdatePrescaled(Power, kPowerAvgInteval) {
+    gSampleResult.p = Dc2SlideWindowAvgUpdate(&gAvgP, p);
+    gSampleResult.q = Dc2SlideWindowAvgUpdate(&gAvgQ, q);
+  }
 
   UpdatePrescaled(SysTick, kSampleTickInteval) {
     gSysTickFlag = 1;

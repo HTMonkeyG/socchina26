@@ -62,19 +62,32 @@ static inline void Pll_Update(
   // v_alpha = x1  (in phase with input)
   // v_beta  = x2  (lagging by 90°, same amplitude as input)
   // Calculate q-axis error: v_q = -v_alpha * sin(θ) + v_beta * cos(θ)
-  f32 e = -P->x1 * sinf(P->phase) + P->x2 * cosf(P->phase);
+  // Normalize by the estimated amplitude so that the phase-detector gain is
+  // ~1 regardless of the input signal amplitude. Without this the loop gain
+  // scales with the grid amplitude (hundreds), driving the frequency into the
+  // limit on tiny errors and preventing the loop from ever settling.
+  f32 amp = sqrtf(P->x1 * P->x1 + P->x2 * P->x2);
+  f32 e = 0.0f;
+  if (amp > 1e-3f)
+    e = (-P->x1 * sinf(P->phase) + P->x2 * cosf(P->phase)) / amp;
 
-  // PI modifier.
-  P->sum += P->Ki * e;
+  // Frequency correction limit (10Hz).
+  const f32 freq_limit = 62.8f;
+
+  // PI modifier. The integral term is scaled by Ts (discrete integration), so
+  // Ki is a proper continuous-domain gain. The integrator is clamped
+  // (anti-windup) so it cannot wind up while the output is saturated.
+  P->sum += P->Ki * e * P->Ts;
+  if (P->sum > freq_limit) P->sum = freq_limit;
+  if (P->sum < -freq_limit) P->sum = -freq_limit;
   f32 dfreq = P->Kp * e + P->sum;
+
+  // Frequency limit (10Hz).
+  if (dfreq > freq_limit) dfreq = freq_limit;
+  if (dfreq < -freq_limit) dfreq = -freq_limit;
 
   // Update frequency estimate.
   P->freq = P->omega0 + dfreq;
-
-  // Frequency limit (10Hz).
-  const f32 freq_limit = 62.8f;
-  if (P->freq > P->omega0 + freq_limit) P->freq = P->omega0 + freq_limit;
-  if (P->freq < P->omega0 - freq_limit) P->freq = P->omega0 - freq_limit;
 
   // Update phase estimate.
   P->phase += P->freq * P->Ts;

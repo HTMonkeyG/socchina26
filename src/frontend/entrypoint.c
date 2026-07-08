@@ -9,11 +9,15 @@
 #include <sdkconfig.h>
 
 #include "frontend/ui/tft.h"
+#include "frontend/control/manager.h"
 #include "frontend/connection/connection.h"
 
 static const char *TAG = "example";
 
 void app_main() {
+  // Initialize general manager.
+  Manager_Initialize();
+
   // Initialize connection between boards.
   Connection_Initialize();
 

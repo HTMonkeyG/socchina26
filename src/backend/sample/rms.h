@@ -6,7 +6,8 @@
 #include "backend/sample/sample.h"
 
 #define kRmsPoints 128
-#define kRmsInteval (kSampleRate / kRmsPoints)
+#define kRmsFreq 4
+#define kRmsInteval (kSampleRate / kRmsFreq / kRmsPoints)
 
 typedef struct {
   Dc2SlideWindowCtx ctx;

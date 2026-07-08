@@ -30,8 +30,8 @@ typedef struct {
 typedef struct {
   MeasureResult inst;
   MeasureResult rms;
-  f32 phaseU;
-  f32 phaseI;
+  f32 p;
+  f32 q;
   f32 freq;
   i08 valid;
 } MeasureMsg;

@@ -40,6 +40,9 @@ static void SerializeMeasure() {
   MeasureMsg msg = {0};
   msg.rms.uL = result->rmsU;
   msg.rms.iL = result->rmsI;
+  msg.p = result->p;
+  msg.q = result->q;
+  msg.freq = result->freq;
 
   Uart_SendMessage(kPacketId_MeasureMsg, (u08 *)&msg, sizeof(MeasureMsg));
 }

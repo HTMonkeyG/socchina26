@@ -21,7 +21,7 @@ void UiFftChartMenu_Initialize(
   lv_chart_set_point_count(self->chart, kFftResultPoints);
   lv_chart_set_type(self->chart, LV_CHART_TYPE_BAR);
   lv_obj_set_size(self->chart, 310, 200);
-  lv_obj_align(self->chart, LV_ALIGN_TOP_MID, 0, 0);
+  lv_obj_align(self->chart, LV_ALIGN_TOP_MID, 0, 5);
 
   // Style: self->chart [LV_PART_MAIN|LV_STATE_DEFAULT]
   lv_obj_set_style_bg_color(self->chart, lv_color_hex(0x506060), LV_STATE_DEFAULT);
@@ -61,7 +61,7 @@ void UiFftChartMenu_Initialize(
   lv_obj_set_align(self->labelFreq, LV_ALIGN_LEFT_MID);
   lv_obj_set_x(self->labelFreq, 5);
   lv_obj_set_y(self->labelFreq, 0);
-  lv_label_set_text(self->labelFreq, "Freq: 50.0Hz");
+  lv_label_set_text(self->labelFreq, "Freq: 00.0Hz");
 
   // Style: self->labelFreq [LV_PART_MAIN|LV_STATE_DEFAULT]
   lv_obj_set_style_text_color(
@@ -76,7 +76,7 @@ void UiFftChartMenu_Initialize(
   lv_obj_set_align(self->labelThd, LV_ALIGN_LEFT_MID);
   lv_obj_set_x(self->labelThd, lv_pct(50));
   lv_obj_set_y(self->labelThd, 0);
-  lv_label_set_text(self->labelThd, "THD: 0.10%");
+  lv_label_set_text(self->labelThd, "THD: 00.00%");
 
   // Style: self->labelThd [LV_PART_MAIN|LV_STATE_DEFAULT]
   lv_obj_set_style_text_color(
@@ -112,7 +112,7 @@ void UiFftChartMenu_SetFloatValues(
   char buffer[20];
   
   lvgl_port_lock(0);
-  snprintf(buffer, sizeof(buffer), "Freq: %04.1f", freq);
+  snprintf(buffer, sizeof(buffer), "Freq: %04.1fHz", freq);
   lv_label_set_text(self->labelFreq, buffer);
   snprintf(buffer, sizeof(buffer), "THD: %04.2f%%", thd);
   lv_label_set_text(self->labelThd, buffer);

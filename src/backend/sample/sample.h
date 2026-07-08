@@ -32,6 +32,13 @@ typedef struct {
   // RMS value of the above values.
   f32 rmsU;
   f32 rmsI;
+
+  // Power.
+  f32 p;
+  f32 q;
+
+  // Frequency.
+  f32 freq;
 } SampleResult;
 
 void Sample_Initialize(void);

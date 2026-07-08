@@ -63,4 +63,22 @@ void UiOcpMenu_Show(
 void UiOcpMenu_Terminate(
   UiOcpMenu *self);
 
+// ----------------------------------------------------------------------------
+// [SECTION] UiLoadingMenu
+// ----------------------------------------------------------------------------
+
+typedef struct {
+  lv_obj_t *screen;
+  lv_obj_t *spinner;
+  // "Setting up..."
+  lv_obj_t *label;
+} UiLoadingMenu;
+
+void UiLoadingMenu_Initialize(
+  UiLoadingMenu *self);
+void UiLoadingMenu_Show(
+  UiLoadingMenu *self);
+void UiLoadingMenu_Terminate(
+  UiLoadingMenu *self);
+
 #endif

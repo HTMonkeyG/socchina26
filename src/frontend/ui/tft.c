@@ -5,6 +5,7 @@
 #include <esp_lcd_ili9341.h>
 #include <esp_log.h>
 #include "shared/packets.h"
+#include "frontend/control/manager.h"
 #include "frontend/ui/tft.h"
 #include "frontend/ui/menu/menu.h"
 
@@ -23,6 +24,7 @@ typedef struct {
 } TftButton;
 
 typedef struct {
+  UiLoadingMenu loading;
   UiFftChartMenu chart1;
   UiOcpMenu ocp;
   TftButton btn1;
@@ -114,16 +116,17 @@ void Tft_Initialize() {
 void Tft_CreatePanel() {
   lvgl_port_lock(0);
 
+  UiLoadingMenu_Initialize(&gTft.loading);
   UiFftChartMenu_Initialize(&gTft.chart1);
   UiOcpMenu_Initialize(&gTft.ocp);
-  UiFftChartMenu_Show(&gTft.chart1);
-  //UiOcpMenu_Show(&gTft.ocp);
+
+  UiLoadingMenu_Show(&gTft.loading);
 
   lvgl_port_unlock();
 }
 
 void Tft_SetFftResult(
-  FftResultMsg *msg
+  const FftResultMsg *msg
 ) {
   lv_coord_t arr[kFftResultPoints];
 
@@ -134,26 +137,20 @@ void Tft_SetFftResult(
   // Calculate fft.
   f32 thd = 0
     , base = (f32)msg->points[1];
-    if (base > 1e-6) {
-      for (int i = 2; i < kFftResultPoints; i++)
-        thd += (f32)msg->points[i] * (f32)msg->points[i];
-      thd = sqrtf(thd) / base * 100.0f;
-    }
+  if (base > 1e-6) {
+    for (int i = 2; i < kFftResultPoints; i++)
+      thd += (f32)msg->points[i] * (f32)msg->points[i];
+    thd = sqrtf(thd) / base * 100.0f;
+  }
 
   UiFftChartMenu_SetResult(&gTft.chart1, arr, kFftResultPoints);
-  UiFftChartMenu_SetFloatValues(&gTft.chart1, 0, thd);
+  UiFftChartMenu_SetFloatValues(&gTft.chart1, GetManager()->lastFreqValue, thd);
 }
 
 void Tft_Update() {
-  /*static i32 count = 0;
-
-  lv_obj_set_pos(gTft.btn1.btn, lv_pct(count), lv_pct(20));
-  count++;
-  count %= 50;
-
-  lv_coord_t arr[10] = {0};
-  for (int i = 0; i < 10; i++)
-    arr[i] = rand() % 100;
-  if (!gpio_get_level(38))
-    UiFftChartMenu_Update(&gTft.chart1, arr, 10);*/
+  // Change the screen to loading if the backend is not ready or died.
+  if (Manager_IsLoading() && lv_screen_active() != gTft.loading.screen)
+    UiLoadingMenu_Show(&gTft.loading);
+  else if (!Manager_IsLoading() && lv_screen_active() == gTft.loading.screen)
+    UiFftChartMenu_Show(&gTft.chart1);
 }
