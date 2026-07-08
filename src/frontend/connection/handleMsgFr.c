@@ -9,8 +9,11 @@ void HandleMsgFr(
   u08 cmd,
   BinaryStream *stream
 ) {
-  //printf("Msg %d\n", cmd);
+  //printf("msg %d\n", cmd);
   switch (cmd) {
+    case kPacketId_MeasureMsg: {
+      break;
+    }
     case kPacketId_FftResultMsg: {
       // Handle FFT result.
       FftResultMsg msg;
@@ -18,8 +21,11 @@ void HandleMsgFr(
       Tft_SetFftResult(&msg);
       break;
     }
+    case kPacketId_HeartbeatMsg: {
+      break;
+    }
     default:
-      printf("Unknown message %d", cmd);
+      printf("unknown message %d\n", cmd);
       break;
   }
 }

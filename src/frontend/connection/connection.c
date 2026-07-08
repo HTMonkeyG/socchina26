@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stddef.h>
 #include <dc2.h>
 #include "shared/binaryStream.h"
@@ -8,7 +9,7 @@ void Connection_Initialize() {
   Uart_Initialize();
 }
 
-//extern void SendAllFr();
+extern void SendAllFr();
 extern void HandleMsgFr(
   u08 cmd,
   BinaryStream *stream);
@@ -18,12 +19,19 @@ void Connection_Update() {
   size_t length;
   u08 buf[kUartBufSize];
   BinaryStream stream;
+  u08 batch = 0;
 
   while (Uart_ReceiveMessage(&packetId, buf, &length)) {
     BinaryStream_Construct(&stream, buf, length, kBinaryStreamMode_Read);
     HandleMsgFr(packetId, &stream);
+
+    batch++;
+    if (batch >= kConnectionMaxPacketBatch) {
+      printf("max batch acceeded, ignored incoming packets.\n");
+      break;
+    }
   }
   
-  //SendAllFr();
+  SendAllFr();
   Uart_Update();
 }

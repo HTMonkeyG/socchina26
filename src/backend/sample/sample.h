@@ -1,15 +1,19 @@
 #ifndef __SAMPLE_H__
 #define __SAMPLE_H__
 
+#include <math.h>
 #include <dc2.h>
 
 #define kSampleRate 25600
 #define kSampleTickFreq 50
 #define kSampleTickInteval (kSampleRate / kSampleTickFreq)
 
-#define kSampleValidValueEpsilon 1e-7
+// Voltage values below this threshold will be considered as zero.
+#define kSampleEpsilonV 5e-2
+// Current values below this threshold will be considered as zero.
+#define kSampleEpsilonI 5e-2
 
-#define VerifyEpsilon
+#define VerifyEpsilon(val, epsilon) (fabsf((val)) > (epsilon))
 
 #define UpdatePrescaled(tag, prescaler) \
   static u32 s_prescaler_ ## tag = 0;\

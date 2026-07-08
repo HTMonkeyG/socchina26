@@ -3,6 +3,7 @@
 #include "backend/sample/sample.h"
 #include "backend/sample/fft.h"
 #include "backend/connection/connection.h"
+#include "backend/control/relay.h"
 
 static void MX_SystemInit() {
   HAL_Init();
@@ -15,10 +16,10 @@ static void MX_SystemInit() {
   MX_USART3_UART_Init();
 }
 
-
 int main() {
   MX_SystemInit();
 
+  Relay_Initialize();
   Connection_Initialize();
   Sample_Initialize();
 
