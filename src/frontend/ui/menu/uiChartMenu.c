@@ -47,10 +47,12 @@ void UiFftChartMenu_SetResult(
   lv_coord_t *val,
   i32 count
 ) {
+  lvgl_port_lock(0);
   for (i32 i = 0; i < kFftResultPoints; i++) {
     lv_coord_t v = i < count ? val[i] : 0;
     lv_chart_set_next_value(self->chart, self->series, v);
   }
+  lvgl_port_unlock();
 }
 
 void UiFftChartMenu_Terminate(

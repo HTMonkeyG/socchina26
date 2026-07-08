@@ -32,19 +32,19 @@ static void s_UartThread(
 
     switch (event.type) {
       case UART_DATA:
+        uart_read_bytes(UART_NUM_1, buffer, event.size, portMAX_DELAY);
         if (xSemaphoreTake(hMutex, portMAX_DELAY)) {
-          uart_read_bytes(UART_NUM_1, buffer, event.size, portMAX_DELAY);
           lwrb_write(&gLwpktRxRb, buffer, event.size);
           xSemaphoreGive(hMutex);
         }
         break;
       case UART_FIFO_OVF:
         uart_flush_input(UART_NUM_1);
-        printf("OVF\n");
+        printf("uart hw buffer overflow.\n");
         break;
       case UART_BUFFER_FULL:
         uart_flush_input(UART_NUM_1);
-        printf("FULL\n");
+        printf("uart sw buffer full.\n");
         break;
       default:
         break;
