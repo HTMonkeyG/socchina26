@@ -16,18 +16,18 @@
 #define kTftPinRst  20
 #define kTftPinBg 8
 
-#define kTftSpiSpeed (40 * 1000 * 1000) // 40MHz
+// 40MHz
+#define kTftSpiSpeed (40 * 1000 * 1000)
+
+// 20Hz
+#define kTftUpdateInteval (configTICK_RATE_HZ / 20)
 
 typedef struct {
-  lv_obj_t *btn;
-  lv_style_t style;
-} TftButton;
-
-typedef struct {
+  u32 lastUpdateTick;
   UiLoadingMenu loading;
   UiFftChartMenu chart1;
+  UiMeasureMenu measure;
   UiOcpMenu ocp;
-  TftButton btn1;
 } Tft;
 
 static Tft gTft = {0};
@@ -118,6 +118,7 @@ void Tft_CreatePanel() {
 
   UiLoadingMenu_Initialize(&gTft.loading);
   UiFftChartMenu_Initialize(&gTft.chart1);
+  UiMeasureMenu_Initialize(&gTft.measure);
   UiOcpMenu_Initialize(&gTft.ocp);
 
   UiLoadingMenu_Show(&gTft.loading);
@@ -125,32 +126,20 @@ void Tft_CreatePanel() {
   lvgl_port_unlock();
 }
 
-void Tft_SetFftResult(
-  const FftResultMsg *msg
-) {
-  lv_coord_t arr[kFftResultPoints];
-
-  // Convert fft points.
-  for (int i = 0; i < kFftResultPoints; i++)
-    arr[i] = (u32)msg->points[i] * 100 / 32767;
-
-  // Calculate fft.
-  f32 thd = 0
-    , base = (f32)msg->points[1];
-  if (base > 1e-6) {
-    for (int i = 2; i < kFftResultPoints; i++)
-      thd += (f32)msg->points[i] * (f32)msg->points[i];
-    thd = sqrtf(thd) / base * 100.0f;
-  }
-
-  UiFftChartMenu_SetResult(&gTft.chart1, arr, kFftResultPoints);
-  UiFftChartMenu_SetFloatValues(&gTft.chart1, GetManager()->lastFreqValue, thd);
-}
-
 void Tft_Update() {
+  if (xTaskGetTickCount() - gTft.lastUpdateTick < kTftUpdateInteval)
+    return;
+  gTft.lastUpdateTick = xTaskGetTickCount();
+
   // Change the screen to loading if the backend is not ready or died.
   if (Manager_IsLoading() && lv_screen_active() != gTft.loading.screen)
     UiLoadingMenu_Show(&gTft.loading);
   else if (!Manager_IsLoading() && lv_screen_active() == gTft.loading.screen)
-    UiFftChartMenu_Show(&gTft.chart1);
+    UiMeasureMenu_Show(&gTft.measure);
+
+  if (lv_screen_active() == gTft.measure.screen)
+    UiMeasureMenu_SetValue(&gTft.measure, GetManager());
+
+  if (lv_screen_active() == gTft.chart1.screen)
+    UiFftChartMenu_SetValue(&gTft.chart1, GetManager());
 }

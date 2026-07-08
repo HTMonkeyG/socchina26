@@ -88,34 +88,21 @@ void UiFftChartMenu_Initialize(
 void UiFftChartMenu_Show(
   UiFftChartMenu *self
 ) {
-  lv_screen_load(self->screen);
-}
-
-void UiFftChartMenu_SetResult(
-  UiFftChartMenu *self,
-  lv_coord_t *val,
-  i32 count
-) {
   lvgl_port_lock(0);
-  for (i32 i = 0; i < kFftResultPoints; i++) {
-    lv_coord_t v = i < count ? val[i] : 0;
-    lv_chart_set_next_value(self->chart, self->series, v);
-  }
+  lv_screen_load(self->screen);
   lvgl_port_unlock();
 }
 
-void UiFftChartMenu_SetFloatValues(
+void UiFftChartMenu_SetValue(
   UiFftChartMenu *self,
-  f32 freq,
-  f32 thd
+  Manager *manager
 ) {
-  char buffer[20];
-  
+  char buf[16];
   lvgl_port_lock(0);
-  snprintf(buffer, sizeof(buffer), "Freq: %04.1fHz", freq);
-  lv_label_set_text(self->labelFreq, buffer);
-  snprintf(buffer, sizeof(buffer), "THD: %04.2f%%", thd);
-  lv_label_set_text(self->labelThd, buffer);
+  for (i32 i = 0; i < kFftResultPoints; i++)
+    lv_chart_set_next_value(self->chart, self->series, manager->fft[i]);
+  snprintf(buf, sizeof(buf), "Freq: %04.1fHz", manager->freq); lv_label_set_text(self->labelFreq, buf);
+  snprintf(buf, sizeof(buf), "THD: %04.2f%%", manager->thd); lv_label_set_text(self->labelThd, buf);
   lvgl_port_unlock();
 }
 

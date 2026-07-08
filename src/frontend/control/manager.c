@@ -1,3 +1,4 @@
+#include <math.h>
 #include <dc2.h>
 #include <freertos/FreeRTOS.h>
 #include "shared/packets.h"
@@ -18,7 +19,35 @@ void Manager_Update() {
 void Manager_RecvMeasure(
   const MeasureMsg *msg
 ) {
-  gManager.lastFreqValue = msg->freq;
+  gManager.irms = msg->rms.iL;
+  gManager.urms = msg->rms.uL;
+  gManager.freq = msg->freq;
+  gManager.p = msg->p;
+  gManager.q = msg->q;
+  gManager.s = sqrtf(gManager.p * gManager.p + gManager.q * gManager.q);
+  if (gManager.s > 1e-7)
+    gManager.pf = gManager.p / gManager.s;
+  else
+    gManager.pf = 0;
+}
+
+void Manager_RecvFft(
+  const FftResultMsg *msg
+) {
+  // Convert fft points.
+  for (int i = 0; i < kFftResultPoints; i++)
+    gManager.fft[i] = (u32)msg->points[i] * 100 / 32767;
+
+  // Calculate fft.
+  f32 thd = 0
+    , base = (f32)msg->points[1];
+  if (base > 1e-6) {
+    for (int i = 2; i < kFftResultPoints; i++)
+      thd += (f32)msg->points[i] * (f32)msg->points[i];
+    thd = sqrtf(thd) / base * 100.0f;
+  }
+
+  gManager.thd = thd;
 }
 
 void Manager_RecvHearBeat() {

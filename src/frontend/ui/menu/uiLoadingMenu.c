@@ -45,7 +45,9 @@ void UiLoadingMenu_Initialize(
 void UiLoadingMenu_Show(
   UiLoadingMenu *self
 ) {
+  lvgl_port_lock(0);
   lv_screen_load(self->screen);
+  lvgl_port_unlock();
 }
 
 void UiLoadingMenu_Terminate(

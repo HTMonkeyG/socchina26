@@ -22,7 +22,7 @@ void HandleMsgFr(
       // Handle FFT result.
       FftResultMsg msg;
       BinaryStream_SerializeBytes(stream, (u08 *)&msg, sizeof(FftResultMsg));
-      Tft_SetFftResult(&msg);
+      Manager_RecvFft(&msg);
       break;
     }
     case kPacketId_HeartbeatMsg: {

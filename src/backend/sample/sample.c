@@ -125,8 +125,8 @@ void HAL_ADC_ConvCpltCallback(
 
   // Update PLL to get the active power and reactive power.
   Pll_Update(&gPllV, gSampleResult.uLN);
-  f32 p = sinf(gPllV.phase - DC2_PI_F / 2) * gSampleResult.iL
-    , q = cosf(gPllV.phase - DC2_PI_F / 2) * gSampleResult.iL;
+  f32 p = gPllV.x1 * gSampleResult.iL
+    , q = gPllV.x2 * gSampleResult.iL;
 
   // Get the frequency in Hz.
   gSampleResult.freq = gPllV.freq / DC2_PI_F / 2;

@@ -4,6 +4,7 @@
 #include <lvgl.h>
 #include <dc2.h>
 #include "shared/packets.h"
+#include "frontend/control/manager.h"
 
 #define MenuInitializeOnce(var, init) \
   do {\
@@ -31,14 +32,9 @@ void UiFftChartMenu_Initialize(
   UiFftChartMenu *self);
 void UiFftChartMenu_Show(
   UiFftChartMenu *self);
-void UiFftChartMenu_SetResult(
+void UiFftChartMenu_SetValue(
   UiFftChartMenu *self,
-  lv_coord_t *val,
-  i32 count);
-void UiFftChartMenu_SetFloatValues(
-  UiFftChartMenu *self,
-  f32 freq,
-  f32 thd);
+  Manager *manager);
 void UiFftChartMenu_Terminate(
   UiFftChartMenu *self);
 
@@ -80,5 +76,30 @@ void UiLoadingMenu_Show(
   UiLoadingMenu *self);
 void UiLoadingMenu_Terminate(
   UiLoadingMenu *self);
+
+// ----------------------------------------------------------------------------
+// [SECTION] UiMeasureMenu
+// ----------------------------------------------------------------------------
+
+typedef struct {
+  lv_obj_t *screen;
+  lv_obj_t *labelV;
+  lv_obj_t *labelI;
+  lv_obj_t *labelTHD;
+  lv_obj_t *labelFreq;
+  lv_obj_t *labelP;
+  lv_obj_t *labelQ;
+  lv_obj_t *labelPF;
+} UiMeasureMenu;
+
+void UiMeasureMenu_Initialize(
+  UiMeasureMenu *self);
+void UiMeasureMenu_Show(
+  UiMeasureMenu *self);
+void UiMeasureMenu_SetValue(
+  UiMeasureMenu *self,
+  Manager *manager);
+void UiMeasureMenu_Terminate(
+  UiMeasureMenu *self);
 
 #endif

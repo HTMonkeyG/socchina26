@@ -12,7 +12,4 @@ void Tft_CreatePanel();
 
 void Tft_Update();
 
-void Tft_SetFftResult(
-  const FftResultMsg *msg);
-
 #endif

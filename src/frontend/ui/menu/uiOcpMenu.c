@@ -77,7 +77,9 @@ void UiOcpMenu_Initialize(
 void UiOcpMenu_Show(
   UiOcpMenu *self
 ) {
+  lvgl_port_lock(0);
   lv_screen_load(self->screen);
+  lvgl_port_unlock();
 }
 
 void UiOcpMenu_Terminate(
