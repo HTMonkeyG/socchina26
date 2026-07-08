@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <dc2.h>
+#include "shared/packets.h"
 
 #define kSampleRate 25600
 #define kSampleTickFreq 50
@@ -38,5 +39,9 @@ void Sample_Terminate(void);
 
 const SampleResult *Sample_GetResult(void);
 i08 Sample_TryUpdate(void);
+
+void Sample_SetCalibrate(
+  SetCalibrateMode mode,
+  f32 value);
 
 #endif

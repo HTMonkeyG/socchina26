@@ -27,8 +27,8 @@ static void SerializeFft() {
   else {
     for (int i = 0; i < kFftResultPoints; i++)
       // Divide the normalized FFT result by the current maximum value, and map it
-      // to the 0~100 range required by the display.
-      msg.points[i] = (u16)((*result)[i << 1] / Sample_GetResult()->rmsU / DC2_SQRT2_F * 100.0f);
+      // to the 0~0x7FFF range required by the frontend.
+      msg.points[i] = (u16)((*result)[i << 1] / Sample_GetResult()->rmsU / DC2_SQRT2_F * 32767.0f);
   }
 
   Uart_SendMessage(kPacketId_FftResultMsg, (u08 *)&msg, sizeof(FftResultMsg));

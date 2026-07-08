@@ -1,3 +1,4 @@
+#include <math.h>
 #include <driver/gpio.h>
 #include <esp_lvgl_port.h>
 #include <esp_lcd_panel_dev.h>
@@ -112,42 +113,7 @@ void Tft_Initialize() {
 
 void Tft_CreatePanel() {
   lvgl_port_lock(0);
-  /*lv_obj_t *label = lv_label_create(lv_screen_active());
-  lv_label_set_text(label, "Hello ST7735!");
-  lv_obj_set_style_text_color(label, lv_color_hex(0xFF0000), LV_STATE_DEFAULT);
-  lv_obj_center(label);*/
 
-  /*lv_obj_t *menu = lv_menu_create(lv_scr_act());
-  lv_obj_set_size(menu, lv_pct(80), lv_pct(80));
-  lv_obj_center(menu);
-
-  lv_menu_set_mode_header(menu, LV_MENU_HEADER_TOP_FIXED);
-  lv_menu_set_mode_root_back_button(menu, LV_MENU_ROOT_BACK_BUTTON_ENABLED);
-
-  lv_obj_t *main_page = lv_menu_page_create(menu, "Main");
-  lv_obj_t *main_list = lv_list_create(main_page);
-  lv_obj_set_size(main_list, lv_pct(100), lv_pct(100));
-
-  lv_obj_t *sub_page = lv_menu_page_create(menu, "Sub");
-  lv_obj_t *sub_list = lv_list_create(sub_page);
-  lv_obj_set_size(sub_list, lv_pct(100), lv_pct(100));
-
-  lv_obj_t *btn = lv_list_add_button(main_list, LV_SYMBOL_FILE, "Enter");
-
-  lv_menu_set_page(menu, main_page);*/
-
-  /*lv_style_t *pStyle = &gTft.btn1.style;
-  lv_style_init(pStyle);
-
-  lv_style_set_bg_color(pStyle, lv_palette_main(LV_PALETTE_BLUE));
-  lv_style_set_bg_opa(pStyle, LV_OPA_COVER);
-  lv_style_set_bg_grad_color(pStyle, lv_palette_lighten(LV_PALETTE_BLUE, 2));
-  lv_style_set_bg_grad_dir(pStyle, LV_GRAD_DIR_VER);
-
-  lv_obj_t *pBtn = gTft.btn1.btn = lv_btn_create(lv_scr_act());
-  lv_obj_add_style(pBtn, pStyle, LV_STATE_DEFAULT);
-  lv_obj_set_size(pBtn, lv_pct(20), lv_pct(20));
-  lv_obj_set_pos(pBtn, lv_pct(20), lv_pct(20));*/
   UiFftChartMenu_Initialize(&gTft.chart1);
   UiOcpMenu_Initialize(&gTft.ocp);
   UiFftChartMenu_Show(&gTft.chart1);
@@ -160,9 +126,22 @@ void Tft_SetFftResult(
   FftResultMsg *msg
 ) {
   lv_coord_t arr[kFftResultPoints];
+
+  // Convert fft points.
   for (int i = 0; i < kFftResultPoints; i++)
-    arr[i] = msg->points[i];
+    arr[i] = (u32)msg->points[i] * 100 / 32767;
+
+  // Calculate fft.
+  f32 thd = 0
+    , base = (f32)msg->points[1];
+    if (base > 1e-6) {
+      for (int i = 2; i < kFftResultPoints; i++)
+        thd += (f32)msg->points[i] * (f32)msg->points[i];
+      thd = sqrtf(thd) / base * 100.0f;
+    }
+
   UiFftChartMenu_SetResult(&gTft.chart1, arr, kFftResultPoints);
+  UiFftChartMenu_SetFloatValues(&gTft.chart1, 0, thd);
 }
 
 void Tft_Update() {

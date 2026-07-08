@@ -18,6 +18,9 @@
 
 typedef struct {
   lv_obj_t *screen;
+  lv_obj_t *labelContainer;
+  lv_obj_t *labelFreq;
+  lv_obj_t *labelThd;
   lv_obj_t *chart;
   lv_chart_series_t *series;
   lv_coord_t data[kFftResultPoints];
@@ -32,6 +35,10 @@ void UiFftChartMenu_SetResult(
   UiFftChartMenu *self,
   lv_coord_t *val,
   i32 count);
+void UiFftChartMenu_SetFloatValues(
+  UiFftChartMenu *self,
+  f32 freq,
+  f32 thd);
 void UiFftChartMenu_Terminate(
   UiFftChartMenu *self);
 

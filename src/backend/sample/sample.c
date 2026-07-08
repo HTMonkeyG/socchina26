@@ -6,6 +6,10 @@
 #include "backend/sample/pll.h"
 #include "backend/sample/rms.h"
 
+// ----------------------------------------------------------------------------
+// [SECTION] declarations
+// ----------------------------------------------------------------------------
+
 // Raw adc data.
 typedef struct {
   // Voltage between L and N.
@@ -18,8 +22,13 @@ typedef struct {
 
 static SampleRaw gRawSampleData;
 static SampleResult gSampleResult;
+static f32 gSampleCalibrate[3] = {0};
 static Rms gRmsV, gRmsI;
 static i08 gSysTickFlag = 0;
+
+// ----------------------------------------------------------------------------
+// [SECTION] functions
+// ----------------------------------------------------------------------------
 
 void Sample_Initialize() {
   Fft_Initialize();
@@ -50,6 +59,22 @@ i08 Sample_TryUpdate() {
   return 0;
 }
 
+void Sample_SetCalibrate(
+  SetCalibrateMode mode,
+  f32 value
+) {
+  if (mode & kSetCalibrateMode_ULN)
+    gSampleCalibrate[0] = value;
+  if (mode & kSetCalibrateMode_IL)
+    gSampleCalibrate[1] = value;
+  if (mode & kSetCalibrateMode_IN)
+    gSampleCalibrate[2] = value;
+}
+
+// ----------------------------------------------------------------------------
+// [SECTION] isr
+// ----------------------------------------------------------------------------
+
 void HAL_HRTIM_RepetitionEventCallback(
   HRTIM_HandleTypeDef *hhrtim,
   uint32_t TimerIdx
@@ -64,9 +89,9 @@ void HAL_ADC_ConvCpltCallback(
   if (hAdc->Instance != ADC2)
     return;
 
-  gSampleResult.uLN = Dc2GetRealVoltage(gRawSampleData.uLN, 11, 0);
-  gSampleResult.iL = Dc2GetRealCurrent(gRawSampleData.iL, 100, 0);
-  gSampleResult.iN = Dc2GetRealCurrent(gRawSampleData.iN, 100, 0);
+  gSampleResult.uLN = Dc2GetRealVoltage(gRawSampleData.uLN, 11, gSampleCalibrate[0]);
+  gSampleResult.iL = Dc2GetRealCurrent(gRawSampleData.iL, 100, gSampleCalibrate[1]);
+  gSampleResult.iN = Dc2GetRealCurrent(gRawSampleData.iN, 100, gSampleCalibrate[2]);
 
   Fft_Update(gSampleResult.uLN);
   UpdatePrescaled(Rms, kRmsInteval) {
