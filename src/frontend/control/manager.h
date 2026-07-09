@@ -4,6 +4,13 @@
 #include <dc2.h>
 #include "shared/packets.h"
 
+typedef enum {
+  kLoadType_None = 0,
+  kLoadType_Resistance,
+  kLoadType_Inductance,
+  kLoadType_Capacitance
+} LoadType;
+
 typedef struct {
   // - Backend states.
   i08 isLastLoading;
@@ -20,6 +27,9 @@ typedef struct {
   f32 s;
   f32 pf;
   f32 thd;
+
+  // - Load type.
+  LoadType load;
 
   // - Fft values.
   i32 fft[kFftResultPoints];

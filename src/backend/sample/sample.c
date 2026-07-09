@@ -1,4 +1,5 @@
 #include <dc2.h>
+#include "shared/packets.h"
 #include "backend/cubemx.h"
 #include "backend/internal.h"
 #include "backend/sample/sample.h"
@@ -10,6 +11,9 @@
 #define kPowerAvgFreq 4
 // 4Hz window time, 256 points a window.
 #define kPowerAvgInteval (kSampleRate / kPowerAvgFreq / kPowerAvgPoints)
+
+#define kWaveformAvgFreq 50
+#define kWaveformAvgPoints (kSampleRate / kWaveformAvgFreq / kWaveformPoints)
 
 // ----------------------------------------------------------------------------
 // [SECTION] declarations
@@ -27,7 +31,12 @@ typedef struct {
 
 static SampleRaw gRawSampleData;
 static SampleResult gSampleResult;
-static f32 gSampleCalibrate[3] = {0};
+static f32 gSampleCalibrate[3] = {
+  // Initial calibration.
+  0.25f,
+  0.06f,
+  0.0f
+};
 static Rms gRmsV, gRmsI;
 static Pll gPllV = {
   .Kp = 133.0f,
@@ -38,8 +47,10 @@ static Pll gPllV = {
 };
 static i08 gSysTickFlag = 0;
 static f32 gAvgScratchP[kPowerAvgPoints]
-  , gAvgScratchQ[kPowerAvgPoints];
-static Dc2SlideWindowCtx gAvgP, gAvgQ;
+  , gAvgScratchQ[kPowerAvgPoints]
+  , gAvgScratchI[kWaveformAvgPoints]
+  , gAvgScratchV[kWaveformAvgPoints];
+static Dc2SlideWindowCtx gAvgP, gAvgQ, gAvgV, gAvgI;
 
 // ----------------------------------------------------------------------------
 // [SECTION] functions
@@ -55,6 +66,9 @@ void Sample_Initialize() {
 
   Dc2SlideWindowAvgInit(&gAvgP, gAvgScratchP, kPowerAvgPoints);
   Dc2SlideWindowAvgInit(&gAvgQ, gAvgScratchQ, kPowerAvgPoints);
+
+  Dc2SlideWindowAvgInit(&gAvgV, gAvgScratchV, kWaveformAvgPoints);
+  Dc2SlideWindowAvgInit(&gAvgI, gAvgScratchI, kWaveformAvgPoints);
 
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADC_Start_DMA(&hadc2, (uint32_t *)&gRawSampleData, 3);
@@ -91,6 +105,10 @@ void Sample_SetCalibrate(
     gSampleCalibrate[1] = iL;
   if (mode & kSetCalibrateMode_IN)
     gSampleCalibrate[2] = iN;
+}
+
+void Sample_AddWaveformPoints() {
+  
 }
 
 // ----------------------------------------------------------------------------
@@ -138,6 +156,9 @@ void HAL_ADC_ConvCpltCallback(
     gSampleResult.p = Dc2SlideWindowAvgUpdate(&gAvgP, p);
     gSampleResult.q = Dc2SlideWindowAvgUpdate(&gAvgQ, q);
   }
+
+  gSampleResult.waveformPointsI[gSampleResult.waveformIndex] = Dc2SlideWindowAvgUpdate(&gAvgI, gSampleResult.iL);
+  gSampleResult.q = Dc2SlideWindowAvgUpdate(&gAvgV, gSampleResult.uLN);
 
   UpdatePrescaled(SysTick, kSampleTickInteval) {
     gSysTickFlag = 1;

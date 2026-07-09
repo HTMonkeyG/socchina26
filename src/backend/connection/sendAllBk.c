@@ -47,6 +47,16 @@ static void SerializeMeasure() {
   Uart_SendMessage(kPacketId_MeasureMsg, (u08 *)&msg, sizeof(MeasureMsg));
 }
 
+static void SerializeWaveform() {
+  const SampleResult *result = Sample_GetResult();
+
+  WaveformMsg msg = {0};
+
+  
+
+  Uart_SendMessage(kPacketId_WaveformMsg, (u08 *)&msg, sizeof(WaveformMsg));
+}
+
 void SendAllBk() {
   if (!Sample_TryUpdate())
     return;

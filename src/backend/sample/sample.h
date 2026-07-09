@@ -4,15 +4,11 @@
 #include <math.h>
 #include <dc2.h>
 #include "shared/packets.h"
+#include "shared/constants.h"
 
 #define kSampleRate 25600
 #define kSampleTickFreq 50
 #define kSampleTickInteval (kSampleRate / kSampleTickFreq)
-
-// Voltage values below this threshold will be considered as zero.
-#define kSampleEpsilonV 5e-2
-// Current values below this threshold will be considered as zero.
-#define kSampleEpsilonI 5e-2
 
 #define VerifyEpsilon(val, epsilon) (fabsf((val)) > (epsilon))
 
@@ -39,6 +35,11 @@ typedef struct {
 
   // Frequency.
   f32 freq;
+
+  // Waveform
+  f32 waveformPointsV[kWaveformPoints];
+  f32 waveformPointsI[kWaveformPoints];
+  i32 waveformIndex;
 } SampleResult;
 
 void Sample_Initialize(void);

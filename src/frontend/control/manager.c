@@ -1,7 +1,7 @@
 #include <math.h>
 #include <dc2.h>
 #include <freertos/FreeRTOS.h>
-#include "shared/packets.h"
+#include "shared/constants.h"
 #include "frontend/ui/input.h"
 #include "frontend/control/manager.h"
 #include "frontend/connection/uartPort.h"
@@ -9,6 +9,8 @@
 #define kManagerHeartbeatToLoading (2000 / portTICK_PERIOD_MS)
 
 static Manager gManager = {0};
+
+static inline f32 CheckNan(f32 v) { return isnanf(v) ? 0 : v; }
 
 void Manager_Initialize() {
   gManager.isFirstHeartbeat = 1;
@@ -38,16 +40,30 @@ void Manager_Update() {
 void Manager_RecvMeasure(
   const MeasureMsg *msg
 ) {
-  gManager.irms = msg->rms.iL;
-  gManager.urms = msg->rms.uL;
-  gManager.freq = msg->freq;
+  gManager.irms = CheckNan(msg->rms.iL);
+  gManager.urms = CheckNan(msg->rms.uL);
+  gManager.freq = gManager.urms < kSampleEpsilonV ? 0 : msg->freq;
   gManager.p = msg->p;
   gManager.q = msg->q;
   gManager.s = sqrtf(gManager.p * gManager.p + gManager.q * gManager.q);
-  if (gManager.s > 1e-7)
+
+  // Calculate PF.
+  if (gManager.s > kSampleEpsilonV)
     gManager.pf = gManager.p / gManager.s;
   else
     gManager.pf = 0;
+
+  // Calculate the load type through reactive power.
+  if (gManager.urms < kSampleEpsilonV)
+    gManager.load = kLoadType_None;
+  else {
+    if (fabsf(gManager.q) < kSampleEpsilonV)
+      gManager.load = kLoadType_Resistance;
+    else if (gManager.q < 0)
+      gManager.load = kLoadType_Capacitance;
+    else
+      gManager.load = kLoadType_Inductance;
+  }
 }
 
 void Manager_RecvFft(
@@ -57,7 +73,7 @@ void Manager_RecvFft(
   for (int i = 0; i < kFftResultPoints; i++)
     gManager.fft[i] = (u32)msg->points[i] * 100 / 32767;
 
-  // Calculate fft.
+  // Calculate THD.
   f32 thd = 0
     , base = (f32)msg->points[1];
   if (base > 1e-6) {

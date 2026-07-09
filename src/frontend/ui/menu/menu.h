@@ -90,6 +90,7 @@ typedef struct {
   lv_obj_t *labelP;
   lv_obj_t *labelQ;
   lv_obj_t *labelPF;
+  lv_obj_t *labelLoad;
 } UiMeasureMenu;
 
 void UiMeasureMenu_Initialize(

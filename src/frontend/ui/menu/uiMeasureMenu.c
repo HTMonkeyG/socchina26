@@ -69,6 +69,18 @@ void UiMeasureMenu_Initialize(
   // Style: self->labelPF [LV_PART_MAIN|LV_STATE_DEFAULT]
   lv_obj_set_style_text_color(self->labelPF, lv_color_hex(0xEEAA44), LV_PART_MAIN | LV_STATE_DEFAULT);
 
+  // Create label: self->labelLoad
+  self->labelLoad = lv_label_create(self->screen);
+  lv_obj_set_width(self->labelLoad, LV_SIZE_CONTENT);
+  lv_obj_set_height(self->labelLoad, LV_SIZE_CONTENT);
+  lv_obj_set_align(self->labelLoad, LV_ALIGN_TOP_LEFT);
+  lv_obj_set_x(self->labelLoad, 90);
+  lv_obj_set_y(self->labelLoad, 174);
+  lv_label_set_text(self->labelLoad, "[NONE]");
+
+  // Style: self->labelLoad [LV_PART_MAIN|LV_STATE_DEFAULT]
+  lv_obj_set_style_text_color(self->labelLoad, lv_color_hex(0xFFAAFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+
   // Create label: self->labelP
   self->labelP = lv_label_create(self->screen);
   lv_obj_set_width(self->labelP, LV_SIZE_CONTENT);
@@ -128,6 +140,8 @@ void UiMeasureMenu_SetValue(
   snprintf(buf, sizeof(buf), "%03.1fVar", manager->q); lv_label_set_text(self->labelQ, buf);
   snprintf(buf, sizeof(buf), "PF %04.2f", manager->pf); lv_label_set_text(self->labelPF, buf);
   snprintf(buf, sizeof(buf), "THD %04.1f%%", manager->thd); lv_label_set_text(self->labelTHD, buf);
+  static const char *kLoadTypeNames[] = { "[NONE]", "[RESISTANCE]", "[INDUCTANCE]", "[CAPACITANCE]" };
+  lv_label_set_text(self->labelLoad, kLoadTypeNames[manager->load]);
   lvgl_port_unlock();
 }
 

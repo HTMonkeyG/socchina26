@@ -2,6 +2,7 @@
 #define __SHARED_PACKETS_H__
 
 #include <dc2.h>
+#include "shared/constants.h"
 
 typedef enum {
   kPacketId_OcpMsg = 1,
@@ -37,15 +38,11 @@ typedef struct {
   i08 valid;
 } MeasureMsg;
 
-#define kFftResultPoints 10
-
 // kPacketId_FftResultMsg = 3
 typedef struct {
   u16 points[kFftResultPoints];
   i08 shutdown;
 } FftResultMsg;
-
-#define kWaveformPoints 64
 
 // kPacketId_WaveformMsg = 4
 typedef struct {
