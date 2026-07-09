@@ -2,7 +2,9 @@
 #include <dc2.h>
 #include <freertos/FreeRTOS.h>
 #include "shared/packets.h"
+#include "frontend/ui/input.h"
 #include "frontend/control/manager.h"
+#include "frontend/connection/uartPort.h"
 
 #define kManagerHeartbeatToLoading (2000 / portTICK_PERIOD_MS)
 
@@ -13,7 +15,26 @@ void Manager_Initialize() {
 }
 
 void Manager_Update() {
+  // Set loading flag.
+  if (Manager_IsLoading() && !gManager.isLastLoading)
+    gManager.isLastLoading = 1;
+  else if (!Manager_IsLoading() && gManager.isLastLoading) {
+    // Ensure the relay is open.
+    gManager.isLastLoading = 0;
+    SetRelayMsg msg;
+    gManager.relayState = msg.state = 0;
+    Uart_SendMessage(kPacketId_SetRelayMsg, (u08 *)&msg, sizeof(SetRelayMsg));
+  }
 
+  static i08 s_lastBtnState = 0;
+  if (s_lastBtnState && !Input_IsPressed(kInputKey_Middle)) {
+    gManager.relayState = !gManager.relayState;
+    SetRelayMsg msg;
+    msg.state = gManager.relayState;
+    Uart_SendMessage(kPacketId_SetRelayMsg, (u08 *)&msg, sizeof(SetRelayMsg));
+    printf("relay state: %d\n", gManager.relayState);
+  }
+  s_lastBtnState = Input_IsPressed(kInputKey_Middle);
 }
 
 void Manager_RecvMeasure(

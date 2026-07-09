@@ -9,6 +9,7 @@
 #include <sdkconfig.h>
 
 #include "frontend/ui/tft.h"
+#include "frontend/ui/input.h"
 #include "frontend/control/manager.h"
 #include "frontend/connection/connection.h"
 
@@ -17,6 +18,9 @@ static const char *TAG = "example";
 void app_main() {
   // Initialize general manager.
   Manager_Initialize();
+
+  // Initialize buttons.
+  Input_Initialize();
 
   // Initialize connection between boards.
   Connection_Initialize();
@@ -27,6 +31,7 @@ void app_main() {
 
   // Main loop.
   while (1) {
+    Manager_Update();
     Connection_Update();
     Tft_Update();
     vTaskDelay(1);

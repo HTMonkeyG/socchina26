@@ -81,14 +81,16 @@ i08 Sample_TryUpdate() {
 
 void Sample_SetCalibrate(
   SetCalibrateMode mode,
-  f32 value
+  f32 u,
+  f32 iL,
+  f32 iN
 ) {
   if (mode & kSetCalibrateMode_ULN)
-    gSampleCalibrate[0] = value;
+    gSampleCalibrate[0] = u;
   if (mode & kSetCalibrateMode_IL)
-    gSampleCalibrate[1] = value;
+    gSampleCalibrate[1] = iL;
   if (mode & kSetCalibrateMode_IN)
-    gSampleCalibrate[2] = value;
+    gSampleCalibrate[2] = iN;
 }
 
 // ----------------------------------------------------------------------------

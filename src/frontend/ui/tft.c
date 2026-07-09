@@ -8,6 +8,7 @@
 #include "frontend/control/manager.h"
 #include "frontend/ui/tft.h"
 #include "frontend/ui/menu/menu.h"
+#include "frontend/ui/input.h"
 
 #define kTftPinMosi 13
 #define kTftPinClk  12
@@ -137,6 +138,14 @@ void Tft_Update() {
   else if (!Manager_IsLoading() && lv_screen_active() == gTft.loading.screen)
     UiMeasureMenu_Show(&gTft.measure);
 
+  if (lv_screen_active() != gTft.loading.screen) {
+    if (Input_IsPressed(kInputKey_Left))
+      UiMeasureMenu_Show(&gTft.measure);
+    else if (Input_IsPressed(kInputKey_Right))
+      UiFftChartMenu_Show(&gTft.chart1);
+  }
+
+  // Update screen states.
   if (lv_screen_active() == gTft.measure.screen)
     UiMeasureMenu_SetValue(&gTft.measure, GetManager());
 

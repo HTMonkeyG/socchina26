@@ -163,7 +163,7 @@
             <AdsACrf>1</AdsACrf>
             <AdsANop>0</AdsANop>
             <AdsANot>0</AdsANot>
-            <AdsLLst>0</AdsLLst>
+            <AdsLLst>1</AdsLLst>
             <AdsLmap>1</AdsLmap>
             <AdsLcgr>1</AdsLcgr>
             <AdsLsym>1</AdsLsym>
@@ -382,12 +382,12 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>libraries/stm32g474xx-template</GroupName>
+          <GroupName>mdk</GroupName>
           <Files>
             <File>
               <FileName>startup_stm32g474xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libraries\stm32g474xx-template\Drivers\MDK-ARM\startup_stm32g474xx.s</FilePath>
+              <FilePath>.\startup_stm32g474xx.s</FilePath>
             </File>
           </Files>
         </Group>

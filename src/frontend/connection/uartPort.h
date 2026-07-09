@@ -1,6 +1,7 @@
 #ifndef __FRONTEND_CONNECTION_UARTPORT_H__
 #define __FRONTEND_CONNECTION_UARTPORT_H__
 
+#include <stddef.h>
 #include <dc2.h>
 
 #define kUartBufSize 512

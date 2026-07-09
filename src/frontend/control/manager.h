@@ -5,7 +5,10 @@
 #include "shared/packets.h"
 
 typedef struct {
+  // - Backend states.
+  i08 isLastLoading;
   i08 isFirstHeartbeat;
+  i08 relayState;
   u32 tickSinceLastHeartbeat;
 
   // - Measured values.

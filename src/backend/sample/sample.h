@@ -49,6 +49,8 @@ i08 Sample_TryUpdate(void);
 
 void Sample_SetCalibrate(
   SetCalibrateMode mode,
-  f32 value);
+  f32 u,
+  f32 iL,
+  f32 iN);
 
 #endif

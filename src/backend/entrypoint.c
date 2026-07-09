@@ -22,8 +22,6 @@ int main() {
   Relay_Initialize();
   Connection_Initialize();
   Sample_Initialize();
-	
-	Relay_SetStatus(1);
 
   while(1) {
     Connection_Update();

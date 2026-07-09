@@ -10,6 +10,7 @@ typedef enum {
   kPacketId_WaveformMsg,
   kPacketId_HeartbeatMsg,
   kPacketId_SetCalibrateMsg,
+  kPacketId_SetRelayMsg,
 } PacketId;
 
 // - Backend to frontend.
@@ -72,6 +73,11 @@ typedef struct {
   f32 iN;
   f32 uLN;
 } SetCalibrateMsg;
+
+// kPacketId_SetRelayMsg = 7
+typedef struct {
+  i08 state;
+} SetRelayMsg;
 
 // - Bi-directional.
 
