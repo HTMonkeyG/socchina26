@@ -26,15 +26,13 @@ void Manager_Update() {
     Uart_SendMessage(kPacketId_SetRelayMsg, (u08 *)&msg, sizeof(SetRelayMsg));
   }
 
-  static i08 s_lastBtnState = 0;
-  if (s_lastBtnState && !Input_IsPressed(kInputKey_Middle)) {
+  if (Input_IsReleased(kInputKey_Middle)) {
     gManager.relayState = !gManager.relayState;
     SetRelayMsg msg;
     msg.state = gManager.relayState;
     Uart_SendMessage(kPacketId_SetRelayMsg, (u08 *)&msg, sizeof(SetRelayMsg));
     printf("relay state: %d\n", gManager.relayState);
   }
-  s_lastBtnState = Input_IsPressed(kInputKey_Middle);
 }
 
 void Manager_RecvMeasure(

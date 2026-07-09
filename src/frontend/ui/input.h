@@ -13,7 +13,11 @@ typedef enum {
 void Input_Initialize();
 void Input_Update();
 
+i08 Input_IsDown(
+  InputKey key);
 i08 Input_IsPressed(
+  InputKey key);
+i08 Input_IsReleased(
   InputKey key);
 
 #endif

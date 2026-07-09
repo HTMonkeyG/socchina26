@@ -2,6 +2,7 @@ idf_component_register(
   SRC_DIRS "../../../src/frontend" "../../../src/frontend/ui" "../../../src/frontend/ui/menu" "../../../src/frontend/ui/fonts" "../../../src/frontend/connection" "../../../src/frontend/control" "../../../src/shared"
   INCLUDE_DIRS "../../../src" "../../../libraries/dc2" "../../../libraries/lwpkt/lwpkt/src/include" "../../../libraries/lwpkt/libs/lwrb/src/include"
   REQUIRES esp_driver_uart
+  REQUIRES esp_timer
   REQUIRES lwpkt
 )
 
